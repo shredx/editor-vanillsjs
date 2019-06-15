@@ -1,13 +1,19 @@
 const BrowserSyncPlugin = require("browser-sync-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require("path");
 
 module.exports = {
-  mode: 'development',
+  mode: "development",
   entry: "./src/index.js",
   output: {
     path: __dirname + "/dist/",
     filename: "js/main.bundle.js"
+  },
+  resolve: {
+    alias: {
+      store: "./src/store/"
+    }
   },
   module: {
     rules: [
@@ -16,9 +22,9 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
           options: {
-            presets: ['@babel/preset-env']
+            presets: ["@babel/preset-env"]
           }
         }
       },

@@ -98,6 +98,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_editor_editor_api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/editor/editor-api */ "./src/utils/editor/editor-api.js");
 /* harmony import */ var _plugins_registry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../plugins/registry */ "./src/plugins/registry.js");
 /* harmony import */ var _store_events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../store/events */ "./src/store/events.js");
+/* harmony import */ var _toolbar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./toolbar */ "./src/editor/toolbar.js");
+/* harmony import */ var _store_editor_store__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../store/editor-store */ "./src/store/editor-store.js");
+/* harmony import */ var _store_editor_store__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_store_editor_store__WEBPACK_IMPORTED_MODULE_4__);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -105,6 +108,9 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+
 
 
 
@@ -118,47 +124,143 @@ function () {
 
     _classCallCheck(this, Editor);
 
+    _defineProperty(this, "_mutationOberserverCb", function (mutationList, observer) {
+      console.log("callback", mutationList);
+      mutationList.forEach(function (mutation) {
+        switch (mutation.type) {
+          case "childList":
+            /* One or more children have been added to and/or removed
+               from the tree; see mutation.addedNodes and
+               mutation.removedNodes */
+            break;
+
+          case "attributes":
+            /* An attribute value changed on the element in
+               mutation.target; the attribute name is in
+               mutation.attributeName and its previous value is in
+               mutation.oldValue */
+            break;
+        }
+      });
+    });
+
+    _defineProperty(this, "getPlugins", function () {
+      var data = [];
+
+      for (var plugin in _plugins_registry__WEBPACK_IMPORTED_MODULE_1__["default"]) {
+        try {
+          var pl = __webpack_require__("./src/plugins sync recursive ^\\.\\/.*$")("./".concat(plugin))["default"];
+
+          if (pl) {
+            data.push(pl);
+          }
+        } catch (e) {// handle error here
+        }
+      }
+
+      return data;
+    });
+
+    _defineProperty(this, "_attachEvents", function (node) {
+      _this.eventsAndCbs.forEach(function (event) {
+        if (event.global) {
+          document.addEventListener(event.name, _this[event.handler], false);
+        } else {
+          node.addEventListener(event.name, _this[event.handler], false);
+        }
+      });
+    });
+
     _defineProperty(this, "onInputChange", function (event) {
-      //console.log(event.target.innerHTML);
       // run plugins
-      _this.dispatchEvent("onContentChanged", event); // call props method 
+      _this.dispatchEvent("onContentChanged", event); // call props method
 
 
       _this.methods.onChange(event);
     });
 
-    _defineProperty(this, "dispatchEvent", function (method, args) {
-      console.log(method, " method fired");
+    _defineProperty(this, "onFocusLost", function (e) {
+      _this.dispatchEvent("onFocusLost");
+    });
 
+    _defineProperty(this, "onFocus", function () {
+      _this.restoreSelection(_this.currentSelection);
+    });
+
+    _defineProperty(this, "onSelect", function () {// implement it
+    });
+
+    _defineProperty(this, "saveSelection", function () {
+      if (window.getSelection) {
+        var sel = window.getSelection();
+
+        if (sel.getRangeAt && sel.rangeCount) {
+          return sel.getRangeAt(0);
+        }
+      } else if (document.selection && document.selection.createRange) {
+        return document.selection.createRange();
+      }
+
+      return null;
+    });
+
+    _defineProperty(this, "restoreSelection", function (range) {
+      if (range) {
+        if (window.getSelection) {
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        } else if (document.selection && range.select) {
+          range.select();
+        }
+      }
+    });
+
+    _defineProperty(this, "dispatchEvent", function (method, args) {
       _this.runPlugins(method, args);
     });
 
     _defineProperty(this, "runPlugins", function (method, args) {
-      for (var plugin in Object.getOwnPropertyNames(_plugins_registry__WEBPACK_IMPORTED_MODULE_1__["default"])) {
+      _this._plugins.forEach(function (plugin) {
         if (plugin[method]) {
-          plugin[method](args);
+          plugin[method](_this);
         }
-      }
+      });
     });
 
     this._editor = new _utils_editor_editor_api__WEBPACK_IMPORTED_MODULE_0__["default"](editorNode);
-    this.toolbarOptions = this.toolbarOptions;
-    this.toolbarOptions = {
-      bold: {
-        status: true,
-        image: '',
-        name: 'B',
-        callback: function callback() {
-          console.log("bold called");
+    this._plugins = this.getPlugins(); // Config for toolbar
 
-          _this._editor.focusEditor();
+    this._toolbar = new _toolbar__WEBPACK_IMPORTED_MODULE_3__["default"](editorNode, this._editor);
+    this.toolbarOptions = this._toolbar.get(); // setup mutation observer
 
-          console.log(document.getSelection().focusNode);
+    this._observer = new MutationObserver(this._mutationOberserverCb);
 
-          _this._editor.bold();
-        }
-      }
-    };
+    this._observer.observe(editorNode, {
+      childList: true,
+      attributes: true,
+      subtree: true //Omit or set to false to observe only changes to the parent node.
+
+    }); // All events are here
+
+
+    this.eventsAndCbs = [{
+      name: "blur",
+      handler: "onFocusLost"
+    }, {
+      name: "selectionchange",
+      handler: "onSelect",
+      global: true
+    }, {
+      name: "focus",
+      handler: "onFocus"
+    }, {
+      name: "keyup",
+      handler: "onKeyup"
+    }, {
+      name: "keydown",
+      handler: "onKeydown"
+    }];
     this.mount(editorNode);
     _store_events__WEBPACK_IMPORTED_MODULE_2__["default"].subscribe("changed", function () {
       console.log("content changed");
@@ -172,11 +274,17 @@ function () {
     value: function mount(editorNode) {
       var _this2 = this;
 
-      var parentNode = document.createElement('div');
-      var contentEditableNode = document.createElement('div');
-      var toolbar = document.createElement('div');
+      var parentNode = document.createElement("div");
+      parentNode.classList.add("parent");
+      var contentEditableNode = document.createElement("div");
+      contentEditableNode.classList.add("vanillajs-editor");
+      var toolbar = document.createElement("div");
+      toolbar.classList.add("editor-toolbar");
       contentEditableNode.contentEditable = true;
-      contentEditableNode.addEventListener('input', this.onInputChange, false);
+      contentEditableNode.addEventListener("input", this.onInputChange, false);
+
+      this._attachEvents(contentEditableNode);
+
       var options = [];
 
       for (var func in this.toolbarOptions) {
@@ -187,28 +295,78 @@ function () {
       }
 
       toolbar.innerHTML = "<ul style=\"list-style:none\">\n      ".concat(options, "\n    </ul>\n    ");
-      toolbar.addEventListener("click", function (event) {
-        console.log("clicked ", event.srcElement.dataset.name);
+      toolbar.addEventListener("focusout", function (event) {
+        console.log("clicked blur", event.srcElement.dataset.name);
+      }, false); //@TODO remove these events when editor removed from code to stop leakage of memory
 
+      toolbar.addEventListener("click", function (event) {
+        //console.log ("clicked ", event.srcElement.dataset.name);
         _this2.toolbarOptions[event.srcElement.dataset.name].callback();
       }, false);
-      parentNode.appendChild(contentEditableNode);
       parentNode.appendChild(toolbar);
+      parentNode.appendChild(contentEditableNode);
       editorNode.appendChild(parentNode);
     }
-    /**
-     * input event is fired when something in an input 
-     * or textarea element has changes and it's also fired
-     *  when something has changed in elements with
-     *  contenteditable attribute. Perfect!} value 
-     */
-
   }]);
 
   return Editor;
 }();
 
 /* harmony default export */ __webpack_exports__["default"] = (Editor);
+
+/***/ }),
+
+/***/ "./src/editor/toolbar.js":
+/*!*******************************!*\
+  !*** ./src/editor/toolbar.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var toolbar =
+/*#__PURE__*/
+function () {
+  function toolbar(node, editorRef) {
+    _classCallCheck(this, toolbar);
+
+    this._editorNode = node;
+    this._editor = editorRef;
+  }
+
+  _createClass(toolbar, [{
+    key: "get",
+    value: function get() {
+      var _this = this;
+
+      return {
+        bold: {
+          status: true,
+          image: "",
+          name: "B",
+          callback: function callback() {
+            _this._editor.bold();
+
+            _this._editor.removeAllRanges();
+
+            _this._editor.focusEditor();
+          }
+        }
+      };
+    }
+  }]);
+
+  return toolbar;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (toolbar);
 
 /***/ }),
 
@@ -222,13 +380,76 @@ function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _editor_editor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./editor/editor */ "./src/editor/editor.js");
+/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index.scss */ "./src/index.scss");
+/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_index_scss__WEBPACK_IMPORTED_MODULE_1__);
+
 
 var node = document.getElementById("local-editor");
 var editor = new _editor_editor__WEBPACK_IMPORTED_MODULE_0__["default"](node, {
-  onChange: function onChange(value) {
-    console.log(value);
+  onChange: function onChange(value) {//console.log(value);
   }
 }); // mount the editor on root node
+
+/***/ }),
+
+/***/ "./src/index.scss":
+/*!************************!*\
+  !*** ./src/index.scss ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ "./src/plugins sync recursive ^\\.\\/.*$":
+/*!***********************************!*\
+  !*** ./src/plugins sync ^\.\/.*$ ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./emoji-transform-editor-plugin": "./src/plugins/emoji-transform-editor-plugin.js",
+	"./emoji-transform-editor-plugin.js": "./src/plugins/emoji-transform-editor-plugin.js",
+	"./registry": "./src/plugins/registry.js",
+	"./registry.js": "./src/plugins/registry.js",
+	"./selection": "./src/plugins/selection.js",
+	"./selection.js": "./src/plugins/selection.js"
+};
+
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	return __webpack_require__(id);
+}
+function webpackContextResolve(req) {
+	var id = map[req];
+	if(!(id + 1)) { // check for number or string
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return id;
+}
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = "./src/plugins sync recursive ^\\.\\/.*$";
+
+/***/ }),
+
+/***/ "./src/plugins/emoji-transform-editor-plugin.js":
+/*!******************************************************!*\
+  !*** ./src/plugins/emoji-transform-editor-plugin.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /Users/rahul.sid/repos/personal/editor-js/src/plugins/emoji-transform-editor-plugin.js: Unexpected token, expected \"{\" (16:24)\n\n\u001b[0m \u001b[90m 14 | \u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 15 | \u001b[39m\u001b[36mexport\u001b[39m \u001b[36mdefault\u001b[39m {\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 16 | \u001b[39m  activate\u001b[33m:\u001b[39m \u001b[36mfunction\u001b[39m () \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[0m \u001b[90m    | \u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 17 | \u001b[39m    \u001b[0m\n\u001b[0m \u001b[90m 18 | \u001b[39m  }\u001b[0m\n\u001b[0m \u001b[90m 19 | \u001b[39m}\u001b[0m\n    at Parser.raise (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:6344:17)\n    at Parser.unexpected (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:7659:16)\n    at Parser.expect (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:7645:28)\n    at Parser.parseBlock (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10329:10)\n    at Parser.parseFunctionBody (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9408:24)\n    at Parser.parseFunctionBodyAndFinish (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9378:10)\n    at withTopicForbiddingContext (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10498:12)\n    at Parser.withTopicForbiddingContext (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9683:14)\n    at Parser.parseFunction (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10497:10)\n    at Parser.parseFunctionExpression (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8864:17)\n    at Parser.parseExprAtom (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8777:21)\n    at Parser.parseExprSubscripts (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8413:23)\n    at Parser.parseMaybeUnary (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8393:21)\n    at Parser.parseExprOps (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8280:23)\n    at Parser.parseMaybeConditional (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8253:23)\n    at Parser.parseMaybeAssign (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8200:21)\n    at Parser.parseObjectProperty (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9265:101)\n    at Parser.parseObjPropValue (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9290:101)\n    at Parser.parseObjectMember (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9214:10)\n    at Parser.parseObj (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9138:25)\n    at Parser.parseExprAtom (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8774:21)\n    at Parser.parseExprSubscripts (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8413:23)\n    at Parser.parseMaybeUnary (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8393:21)\n    at Parser.parseExprOps (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8280:23)\n    at Parser.parseMaybeConditional (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8253:23)\n    at Parser.parseMaybeAssign (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8200:21)\n    at Parser.parseExportDefaultExpression (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10973:24)\n    at Parser.parseExport (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10868:31)\n    at Parser.parseStatementContent (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9892:27)\n    at Parser.parseStatement (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9788:17)");
 
 /***/ }),
 
@@ -242,8 +463,62 @@ var editor = new _editor_editor__WEBPACK_IMPORTED_MODULE_0__["default"](node, {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
-  emojiTransformPlugin: {}
+  emojiTransformEditorPlugin: "emoji-transform-editor-plugin",
+  selection: "selection"
 });
+
+/***/ }),
+
+/***/ "./src/plugins/selection.js":
+/*!**********************************!*\
+  !*** ./src/plugins/selection.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var selectionEditorPlugin =
+/*#__PURE__*/
+function () {
+  function selectionEditorPlugin() {
+    _classCallCheck(this, selectionEditorPlugin);
+  }
+
+  _createClass(selectionEditorPlugin, null, [{
+    key: "onFocusLost",
+    value: function onFocusLost(editor) {
+      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var currentSelection = editor.saveSelection();
+      editor.restoreSelection(currentSelection); // then, you loose focus
+    }
+  }]);
+
+  return selectionEditorPlugin;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (selectionEditorPlugin);
+
+/***/ }),
+
+/***/ "./src/store/editor-store.js":
+/*!***********************************!*\
+  !*** ./src/store/editor-store.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var editorStore = function editorStore() {
+  _classCallCheck(this, editorStore);
+};
 
 /***/ }),
 
@@ -309,12 +584,46 @@ function () {
     _classCallCheck(this, editorApi);
 
     this.editorNode = node;
+    this.focusNode = null;
+    this.focusNodeOffset = 0;
   }
 
   _createClass(editorApi, [{
     key: "focusEditor",
     value: function focusEditor() {
       this.editorNode.focus();
+    }
+  }, {
+    key: "removeAllRanges",
+    value: function removeAllRanges() {
+      this.saveFocusNode();
+      document.getSelection().removeAllRanges();
+      this.focusNodeFn();
+    }
+  }, {
+    key: "saveFocusNode",
+    value: function saveFocusNode() {
+      var node = document.getSelection();
+      this.focusNode = node.focusNode;
+      this.focusNodeOffset = node.focusOffset;
+    }
+  }, {
+    key: "getSelection",
+    value: function getSelection() {
+      return document.getSelection();
+    }
+  }, {
+    key: "focusNodeFn",
+    value: function focusNodeFn() {
+      this.getSelection().setPosition(this.focusNode, this.focusNodeOffset);
+
+      this._resetFocusNode();
+    }
+  }, {
+    key: "_resetFocusNode",
+    value: function _resetFocusNode() {
+      this.focusNode = null;
+      this.focusNodeOffset = 0;
     }
   }, {
     key: "insertCustomTag",

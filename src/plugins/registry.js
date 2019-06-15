@@ -1,3 +1,4 @@
 export default {
-  emojiTransformPlugin: {}
-}
+  emojiTransformEditorPlugin: "emoji-transform-editor-plugin",
+  selection: "selection"
+};

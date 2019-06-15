@@ -1,0 +1,16 @@
+.vanillajs-editor {
+  padding: 12px; }
+  .vanillajs-editor:focus {
+    outline: 0px solid #ffcece; }
+
+.parent {
+  border: 0.1px solid #dcdbdb;
+  padding: 4px; }
+
+.editor-toolbar ul {
+  margin: 0px;
+  padding: 0px; }
+  .editor-toolbar ul li {
+    padding: 4px; }
+
+/*# sourceMappingURL=style.css.map*/

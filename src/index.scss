@@ -1,0 +1,24 @@
+// all measurements in multiple of 4px
+.vanillajs-editor {
+  &:focus {
+    outline: 0px solid #ffcece;
+  }
+
+  padding: 12px;
+}
+
+.parent {
+  border: 0.1px solid #dcdbdb;
+  padding: 4px;
+}
+
+.editor-toolbar {
+  ul {
+    margin: 0px;
+    padding: 0px;
+
+    li {
+      padding: 4px;
+    }
+  }
+}

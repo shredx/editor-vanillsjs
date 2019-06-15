@@ -1,0 +1,3 @@
+class editorStore {
+  constructor() {}
+}

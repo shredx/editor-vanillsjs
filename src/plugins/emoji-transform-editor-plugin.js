@@ -1,6 +1,6 @@
 import editor from "../editor/editor";
 
-export default class emojiTransformEditorPlugin extends editor {
+class emojiTransformEditorPlugin extends editor {
 
   static transformToEmojis (editor, args) {
     // transform here
@@ -10,4 +10,10 @@ export default class emojiTransformEditorPlugin extends editor {
     // do here
   }
 
-} 
+}
+
+export default {
+  activate: function () => {
+    
+  }
+}
