@@ -61,7 +61,7 @@ class editorApi {
   // foreColor: (color) -> @_ec("foreColor", false, color)
   // formatBlock: (tagName) -> @_ec("formatBlock", false, tagName)
   // forwardDelete: -> @_ec("forwardDelete", false)
-  // heading: (tagName) -> @_ec("heading", false, tagName)
+  heading: (tagName) -> @_ec("heading", false, tagName)
   // hiliteColor: (color) -> @_ec("hiliteColor", false, color)
   // increaseFontSize: -> @_ec("increaseFontSize", false)
   // indent: -> @_ec("indent", false)
