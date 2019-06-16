@@ -92,7 +92,14 @@ class editorApi {
   justifyCenter() {
     this._ec("justifyCenter", false);
   }
-
+  fontColor(){
+    this._ec('styleWithCSS', false, true)
+    this._ec('foreColor', false, 'rgba(255, 0, 0, 0.3)');
+  }
+  fontColorReset(){
+    this._ec('styleWithCSS', false, true)
+    this._ec('foreColor', false, '000000');
+  }
   // outdent: -> @_ec("outdent", false)
   // paste: -> @_ec("paste", false)
   // redo: -> @_ec("redo", false)
