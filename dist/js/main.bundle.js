@@ -77,7 +77,7 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/";
+/******/ 	__webpack_require__.p = "";
 /******/
 /******/
 /******/ 	// Load entry module and return exports
@@ -366,6 +366,7 @@ function () {
 
     this._editorNode = node;
     this._editor = editorRef;
+    this.flag = false;
   }
 
   _createClass(toolbar, [{
@@ -427,6 +428,38 @@ function () {
             _this._editor.justifyLeft();
 
             _this._editor.focusEditor();
+          }
+        },
+        italic: {
+          status: true,
+          image: "",
+          name: "I",
+          callback: function callback() {
+            _this._editor.italic();
+
+            _this._editor.removeAllRanges();
+
+            _this._editor.focusEditor();
+          }
+        },
+        fontColor: {
+          status: true,
+          image: "",
+          name: "FC",
+          callback: function callback() {
+            if (!_this.flag) {
+              _this._editor.fontColor();
+
+              _this._editor.focusEditor();
+
+              _this.flag = true;
+            } else {
+              _this._editor.fontColorReset();
+
+              _this._editor.focusEditor();
+
+              _this.flag = false;
+            }
           }
         }
       };
@@ -499,13 +532,12 @@ function webpackContext(req) {
 	return __webpack_require__(id);
 }
 function webpackContextResolve(req) {
-	var id = map[req];
-	if(!(id + 1)) { // check for number or string
+	if(!__webpack_require__.o(map, req)) {
 		var e = new Error("Cannot find module '" + req + "'");
 		e.code = 'MODULE_NOT_FOUND';
 		throw e;
 	}
-	return id;
+	return map[req];
 }
 webpackContext.keys = function webpackContextKeys() {
 	return Object.keys(map);
@@ -933,8 +965,12 @@ function () {
     // insertUnorderedList: -> @_ec("insertUnorderedList", false)
     // insertParagraph: -> @_ec("insertParagraph", false)
     // insertText: (text) -> @_ec("insertText", false, text)
-    // italic: -> @_ec("italic", false)
-    // justifyCenter: -> @_ec("justifyCenter", false)
+
+  }, {
+    key: "italic",
+    value: function italic() {
+      this._ec("italic", false);
+    } // justifyCenter: -> @_ec("justifyCenter", false)
     // justifyFull: -> @_ec("justifyFull", false)
 
   }, {
@@ -951,6 +987,20 @@ function () {
     key: "justifyCenter",
     value: function justifyCenter() {
       this._ec("justifyCenter", false);
+    }
+  }, {
+    key: "fontColor",
+    value: function fontColor() {
+      this._ec('styleWithCSS', false, true);
+
+      this._ec('foreColor', false, 'rgba(255, 0, 0, 0.3)');
+    }
+  }, {
+    key: "fontColorReset",
+    value: function fontColorReset() {
+      this._ec('styleWithCSS', false, true);
+
+      this._ec('foreColor', false, '000000');
     } // outdent: -> @_ec("outdent", false)
     // paste: -> @_ec("paste", false)
     // redo: -> @_ec("redo", false)

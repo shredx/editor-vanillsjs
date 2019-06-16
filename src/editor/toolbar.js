@@ -2,8 +2,8 @@ class toolbar {
   constructor(node, editorRef) {
     this._editorNode = node;
     this._editor = editorRef;
+    this.flag = false;
   }
-
   get() {
     return {
       bold: {
@@ -65,6 +65,24 @@ class toolbar {
           this._editor.italic();
           this._editor.removeAllRanges();
           this._editor.focusEditor();
+        }
+      },
+
+      fontColor: {
+        status: true,
+        image: "",
+        name: "FC",
+        callback: () => {
+          if(!this.flag){
+            this._editor.fontColor();
+            this._editor.focusEditor();
+            this.flag = true;
+          }
+          else{
+            this._editor.fontColorReset();
+            this._editor.focusEditor();
+            this.flag = false;
+          } 
         }
       }
     };
