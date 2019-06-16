@@ -826,9 +826,169 @@ var buildAnchorTag = function buildAnchorTag(data) {
   !*** ./src/utils/editor/editor-api.js ***!
   \****************************************/
 /*! exports provided: default */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /Users/rahul.sid/repos/personal/editor-js/src/utils/editor/editor-api.js: Unexpected token (64:9)\n\n\u001b[0m \u001b[90m 62 | \u001b[39m  \u001b[90m// formatBlock: (tagName) -> @_ec(\"formatBlock\", false, tagName)\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 63 | \u001b[39m  \u001b[90m// forwardDelete: -> @_ec(\"forwardDelete\", false)\u001b[39m\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 64 | \u001b[39m  heading\u001b[33m:\u001b[39m (tagName) \u001b[33m-\u001b[39m\u001b[33m>\u001b[39m \u001b[33m@\u001b[39m_ec(\u001b[32m\"heading\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36mfalse\u001b[39m\u001b[33m,\u001b[39m tagName)\u001b[0m\n\u001b[0m \u001b[90m    | \u001b[39m         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 65 | \u001b[39m  \u001b[90m// hiliteColor: (color) -> @_ec(\"hiliteColor\", false, color)\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 66 | \u001b[39m  \u001b[90m// increaseFontSize: -> @_ec(\"increaseFontSize\", false)\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 67 | \u001b[39m  \u001b[90m// indent: -> @_ec(\"indent\", false)\u001b[39m\u001b[0m\n    at Parser.raise (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:6344:17)\n    at Parser.unexpected (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:7659:16)\n    at Parser.parseClassMemberWithIsStatic (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10735:12)\n    at Parser.parseClassMember (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10631:10)\n    at withTopicForbiddingContext (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10586:14)\n    at Parser.withTopicForbiddingContext (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9683:14)\n    at Parser.parseClassBody (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10563:10)\n    at Parser.parseClass (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10537:22)\n    at Parser.parseStatementContent (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9830:21)\n    at Parser.parseStatement (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9788:17)\n    at Parser.parseBlockOrModuleBlockBody (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10364:25)\n    at Parser.parseBlockBody (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10351:10)\n    at Parser.parseTopLevel (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9717:10)\n    at Parser.parse (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:11233:17)\n    at parse (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:11269:38)\n    at parser (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/core/lib/transformation/normalize-file.js:170:34)\n    at normalizeFile (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/core/lib/transformation/normalize-file.js:138:11)\n    at runSync (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/core/lib/transformation/index.js:44:43)\n    at runAsync (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/core/lib/transformation/index.js:35:14)\n    at process.nextTick (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/core/lib/transform.js:34:34)\n    at processTicksAndRejections (internal/process/next_tick.js:74:9)");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var editorApi =
+/*#__PURE__*/
+function () {
+  function editorApi(node) {
+    _classCallCheck(this, editorApi);
+
+    this.editorNode = node;
+    this.focusNode = null;
+    this.focusNodeOffset = 0;
+  }
+
+  _createClass(editorApi, [{
+    key: "focusEditor",
+    value: function focusEditor() {
+      this.editorNode.focus();
+    }
+  }, {
+    key: "removeAllRanges",
+    value: function removeAllRanges() {
+      this.saveFocusNode();
+      document.getSelection().removeAllRanges();
+      this.focusNodeFn();
+    }
+  }, {
+    key: "saveFocusNode",
+    value: function saveFocusNode() {
+      var node = document.getSelection();
+      this.focusNode = node.focusNode;
+      this.focusNodeOffset = node.focusOffset;
+    }
+  }, {
+    key: "getSelection",
+    value: function getSelection() {
+      return document.getSelection();
+    }
+  }, {
+    key: "focusNodeFn",
+    value: function focusNodeFn() {
+      this.getSelection().setPosition(this.focusNode, this.focusNodeOffset);
+
+      this._resetFocusNode();
+    }
+  }, {
+    key: "_resetFocusNode",
+    value: function _resetFocusNode() {
+      this.focusNode = null;
+      this.focusNodeOffset = 0;
+    }
+  }, {
+    key: "insertCustomTag",
+    value: function insertCustomTag(componentKey) {
+      var props = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var replacePlaceholder = props.replacePlaceholder || false;
+      this.insertHTML(props.tag);
+    }
+  }, {
+    key: "backColor",
+    value: function backColor(color) {
+      this._ec("backColor", false, color);
+    }
+  }, {
+    key: "bold",
+    value: function bold() {
+      this._ec("bold", false, null);
+    }
+  }, {
+    key: "addCustomTag",
+    value: function addCustomTag(htmlString) {
+      this._ec("insertHTML", false, htmlString);
+    } // copy: -> @_ec("copy", false)
+    // createLink: (uri) -> @_ec("createLink", false, uri)
+    // cut: -> @_ec("cut", false)
+    // decreaseFontSize: -> @_ec("decreaseFontSize", false)
+    // delete: -> @_ec("delete", false)
+    // fontName: (fontName) -> @_ec("fontName", false, fontName)
+    // fontSize: (fontSize) -> @_ec("fontSize", false, fontSize)
+    // foreColor: (color) -> @_ec("foreColor", false, color)
+    // formatBlock: (tagName) -> @_ec("formatBlock", false, tagName)
+    // forwardDelete: -> @_ec("forwardDelete", false)
+    //heading: (tagName) -> @_ec("heading", false, tagName)
+    // hiliteColor: (color) -> @_ec("hiliteColor", false, color)
+    // increaseFontSize: -> @_ec("increaseFontSize", false)
+    // indent: -> @_ec("indent", false)
+    // insertHorizontalRule: -> @_ec("insertHorizontalRule", false)
+
+  }, {
+    key: "insertHTML",
+    value: function insertHTML(html) {
+      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+          selectInsertion = _ref.selectInsertion;
+
+      this._ec("insertHTML", false, html);
+    } // insertImage: (uri) -> @_ec("insertImage", false, uri)
+    // insertOrderedList: -> @_ec("insertOrderedList", false)
+    // insertUnorderedList: -> @_ec("insertUnorderedList", false)
+    // insertParagraph: -> @_ec("insertParagraph", false)
+    // insertText: (text) -> @_ec("insertText", false, text)
+    // italic: -> @_ec("italic", false)
+    // justifyCenter: -> @_ec("justifyCenter", false)
+    // justifyFull: -> @_ec("justifyFull", false)
+
+  }, {
+    key: "justifyLeft",
+    value: function justifyLeft() {
+      this._ec("justifyLeft", false);
+    }
+  }, {
+    key: "justifyRight",
+    value: function justifyRight() {
+      this._ec("justifyRight", false);
+    }
+  }, {
+    key: "justifyCenter",
+    value: function justifyCenter() {
+      this._ec("justifyCenter", false);
+    } // outdent: -> @_ec("outdent", false)
+    // paste: -> @_ec("paste", false)
+    // redo: -> @_ec("redo", false)
+    // removeFormat: -> @_ec("removeFormat", false)
+    // selectAll: -> @_ec("selectAll", false)
+    // strikeThrough: -> @_ec("strikeThrough", false)
+    // subscript: -> @_ec("subscript", false)
+    // superscript: -> @_ec("superscript", false)
+    // underline: -> @_ec("underline", false)
+    // undo: -> @_ec("undo", false)
+    // unlink: -> @_ec("unlink", false)
+    // styleWithCSS: (style) -> @_ec("styleWithCSS", false, style)
+    // contentReadOnly: -> @_notImplemented()
+    // enableInlineTableEditing: -> @_notImplemented()
+    // enableObjectResizing: -> @_notImplemented()
+    // insertBrOnReturn: -> @_notImplemented()
+    // useCSS: -> @_notImplemented()
+
+  }, {
+    key: "_ec",
+    value: function _ec() {
+      var _document;
+
+      (_document = document).execCommand.apply(_document, arguments);
+
+      return this;
+    }
+  }, {
+    key: "_notImplemented",
+    value: function _notImplemented() {
+      throw new Error("Not implemented");
+    }
+  }]);
+
+  return editorApi;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (editorApi);
 
 /***/ })
 
