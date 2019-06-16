@@ -2,7 +2,7 @@
 
 Editor completely made in Vanillajs. We are using plugin architecture.
 
-![Alt text](./dist/assets/icons/left-align.svg "Title")
+![Alt text](.//left-align.svg "Title")
 
 Tech:
 
