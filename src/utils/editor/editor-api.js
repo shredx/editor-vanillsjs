@@ -45,7 +45,7 @@ class editorApi {
   }
 
   bold() {
-    this._ec("bold", false);
+    this._ec("bold", false, null);
   }
 
   addCustomTag(htmlString) {
@@ -83,8 +83,16 @@ class editorApi {
   
   // justifyCenter: -> @_ec("justifyCenter", false)
   // justifyFull: -> @_ec("justifyFull", false)
-  // justifyLeft: -> @_ec("justifyLeft", false)
-  // justifyRight: -> @_ec("justifyRight", false)
+  justifyLeft() {
+    this._ec("justifyLeft", false);
+  }
+  justifyRight() {
+    this._ec("justifyRight", false);
+  }
+  justifyCenter() {
+    this._ec("justifyCenter", false);
+  }
+
   // outdent: -> @_ec("outdent", false)
   // paste: -> @_ec("paste", false)
   // redo: -> @_ec("redo", false)

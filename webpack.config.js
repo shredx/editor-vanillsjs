@@ -8,7 +8,8 @@ module.exports = {
   entry: "./src/index.js",
   output: {
     path: __dirname + "/dist/",
-    filename: "js/main.bundle.js"
+    filename: "js/main.bundle.js",
+    publicPath: "/"
   },
   resolve: {
     alias: {

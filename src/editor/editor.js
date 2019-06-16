@@ -79,11 +79,18 @@ class Editor {
     for (let func in this.toolbarOptions) {
       if (this.toolbarOptions[func].status) {
         const opt = this.toolbarOptions[func];
-        options.push(`<li data-name="${func}">${opt.name}</li>`);
+        let item = opt.name;
+
+        if (opt.image) {
+          item = `<img src="${opt.image}" data-name="${func}" class="${
+            opt.className
+          }" alt="${opt.name}"/>`;
+        }
+        options.push(`<li data-name="${func}">${item}</li>`);
       }
     }
     toolbar.innerHTML = `<ul style="list-style:none">
-      ${options}
+      ${options.join("")}
     </ul>
     `;
 

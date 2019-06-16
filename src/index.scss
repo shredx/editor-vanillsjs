@@ -20,9 +20,21 @@
   ul {
     margin: 0px;
     padding: 0px;
+    display: flex;
 
     li {
       padding: 4px;
+      width: 24px;
+      height: 24px;
+      &:hover {
+        cursor: pointer;
+        border: 1px solid grey;
+      }
     }
+  }
+
+  .toolbar-icons {
+    width: 20px;
+    height: 20px;
   }
 }
