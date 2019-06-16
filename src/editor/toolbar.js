@@ -8,7 +8,8 @@ class toolbar {
     return {
       bold: {
         status: true,
-        image: "",
+        image: "assets/icons/bold.svg",
+        className: "toolbar-icons",
         name: "B",
         callback: () => {
           this._editor.bold();
@@ -37,7 +38,8 @@ class toolbar {
       },
       leftAlign: {
         status: true,
-        image: "",
+        image: "assets/icons/left-align.svg",
+        className: "toolbar-icons",
         name: "LA",
         callback: () => {
           this._editor.justifyLeft();
@@ -46,7 +48,8 @@ class toolbar {
       },
       attachment: {
         status: true,
-        image: "",
+        image: "assets/icons/attachment.svg",
+        className: "toolbar-icons",
         name: "AT",
         callback: () => {
           this._editor.justifyLeft();
