@@ -11,8 +11,18 @@
 
 .editor-toolbar ul {
   margin: 0px;
-  padding: 0px; }
+  padding: 0px;
+  display: flex; }
   .editor-toolbar ul li {
-    padding: 4px; }
+    padding: 4px;
+    width: 24px;
+    height: 24px; }
+    .editor-toolbar ul li:hover {
+      cursor: pointer;
+      border: 1px solid grey; }
+
+.editor-toolbar .toolbar-icons {
+  width: 20px;
+  height: 20px; }
 
 /*# sourceMappingURL=style.css.map*/

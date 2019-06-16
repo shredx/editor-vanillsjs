@@ -77,7 +77,7 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "/";
 /******/
 /******/
 /******/ 	// Load entry module and return exports
@@ -311,11 +311,17 @@ function () {
       for (var func in this.toolbarOptions) {
         if (this.toolbarOptions[func].status) {
           var opt = this.toolbarOptions[func];
-          options.push("<li data-name=\"".concat(func, "\">").concat(opt.name, "</li>"));
+          var item = opt.name;
+
+          if (opt.image) {
+            item = "<img src=\"".concat(opt.image, "\" data-name=\"").concat(func, "\" class=\"").concat(opt.className, "\" alt=\"").concat(opt.name, "\"/>");
+          }
+
+          options.push("<li data-name=\"".concat(func, "\">").concat(item, "</li>"));
         }
       }
 
-      toolbar.innerHTML = "<ul style=\"list-style:none\">\n      ".concat(options, "\n    </ul>\n    ");
+      toolbar.innerHTML = "<ul style=\"list-style:none\">\n      ".concat(options.join(""), "\n    </ul>\n    ");
       toolbar.addEventListener("focusout", function (event) {
         console.log("clicked blur", event.srcElement.dataset.name);
       }, false); //@TODO remove these events when editor removed from code to stop leakage of memory
@@ -375,7 +381,47 @@ function () {
           callback: function callback() {
             _this._editor.bold();
 
-            _this._editor.removeAllRanges();
+            _this._editor.focusEditor();
+          }
+        },
+        centerAlign: {
+          status: true,
+          image: "assets/icons/center-align.png",
+          className: "toolbar-icons",
+          name: "CA",
+          callback: function callback() {
+            _this._editor.justifyCenter();
+
+            _this._editor.focusEditor();
+          }
+        },
+        rightAlign: {
+          status: true,
+          image: "assets/icons/right-align.svg",
+          className: "toolbar-icons",
+          name: "RA",
+          callback: function callback() {
+            _this._editor.justifyRight();
+
+            _this._editor.focusEditor();
+          }
+        },
+        leftAlign: {
+          status: true,
+          image: "",
+          name: "LA",
+          callback: function callback() {
+            _this._editor.justifyLeft();
+
+            _this._editor.focusEditor();
+          }
+        },
+        attachment: {
+          status: true,
+          image: "",
+          name: "AT",
+          callback: function callback() {
+            _this._editor.justifyLeft();
 
             _this._editor.focusEditor();
           }
@@ -850,7 +896,7 @@ function () {
   }, {
     key: "bold",
     value: function bold() {
-      this._ec("bold", false);
+      this._ec("bold", false, null);
     }
   }, {
     key: "addCustomTag",
@@ -887,9 +933,22 @@ function () {
     // italic: -> @_ec("italic", false)
     // justifyCenter: -> @_ec("justifyCenter", false)
     // justifyFull: -> @_ec("justifyFull", false)
-    // justifyLeft: -> @_ec("justifyLeft", false)
-    // justifyRight: -> @_ec("justifyRight", false)
-    // outdent: -> @_ec("outdent", false)
+
+  }, {
+    key: "justifyLeft",
+    value: function justifyLeft() {
+      this._ec("justifyLeft", false);
+    }
+  }, {
+    key: "justifyRight",
+    value: function justifyRight() {
+      this._ec("justifyRight", false);
+    }
+  }, {
+    key: "justifyCenter",
+    value: function justifyCenter() {
+      this._ec("justifyCenter", false);
+    } // outdent: -> @_ec("outdent", false)
     // paste: -> @_ec("paste", false)
     // redo: -> @_ec("redo", false)
     // removeFormat: -> @_ec("removeFormat", false)
