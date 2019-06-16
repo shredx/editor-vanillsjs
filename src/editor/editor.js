@@ -27,7 +27,9 @@ class Editor {
       { name: "selectionchange", handler: "onSelect", global: true },
       { name: "focus", handler: "onFocus" },
       { name: "keyup", handler: "onKeyup" },
-      { name: "keydown", handler: "onKeydown" }
+      { name: "keydown", handler: "onKeydown" },
+      { name: "drop", handler: "onDrop" },
+      { name: "dragover", handler: "onDragOver" }
     ];
 
     this.mount(editorNode);
@@ -111,16 +113,20 @@ class Editor {
 
   getPlugins = () => {
     const data = [];
-    for (let plugin in registry) {
+    Object.keys(registry).forEach(function(pluginKey) {
+      const path = registry[pluginKey];
+      console.log(pluginKey, path);
+
       try {
-        const pl = require(`../plugins/${plugin}`).default;
+        const pl = require(`../plugins/${path}`).default;
         if (pl) {
           data.push(pl);
         }
       } catch (e) {
         // handle error here
+        console.log(e);
       }
-    }
+    });
 
     return data;
   };
@@ -159,6 +165,14 @@ class Editor {
   onSelect = () => {
     // implement it
   };
+
+  onDrop = e => {
+    this.dispatchEvent("onDrop", { event: e });
+  };
+
+  onDragOver = e => {
+    this.dispatchEvent("onDragOver", { event: e });
+  };
   // move to selection plugin
   saveSelection = () => {
     if (window.getSelection) {
@@ -193,7 +207,7 @@ class Editor {
   runPlugins = (method, args) => {
     this._plugins.forEach(plugin => {
       if (plugin[method]) {
-        plugin[method](this);
+        plugin[method](this, args);
       }
     });
   };

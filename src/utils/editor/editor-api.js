@@ -47,6 +47,10 @@ class editorApi {
   bold() {
     this._ec("bold", false);
   }
+
+  addCustomTag(htmlString) {
+    this._ec("insertHTML", false, htmlString);
+  }
   // copy: -> @_ec("copy", false)
   // createLink: (uri) -> @_ec("createLink", false, uri)
   // cut: -> @_ec("cut", false)

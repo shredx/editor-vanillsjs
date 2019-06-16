@@ -1,19 +1,13 @@
 import editor from "../editor/editor";
 
 class emojiTransformEditorPlugin extends editor {
-
-  static transformToEmojis (editor, args) {
+  static transformToEmojis(editor, args) {
     // transform here
   }
 
-  onContentChanged (editor, event) {
+  onContentChanged(editor, event) {
     // do here
   }
-
 }
 
-export default {
-  activate: function () => {
-    
-  }
-}
+export default emojiTransformEditorPlugin;

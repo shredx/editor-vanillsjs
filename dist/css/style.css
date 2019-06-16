@@ -2,6 +2,8 @@
   padding: 12px; }
   .vanillajs-editor:focus {
     outline: 0px solid #ffcece; }
+  .vanillajs-editor img {
+    max-width: 50%; }
 
 .parent {
   border: 0.1px solid #dcdbdb;

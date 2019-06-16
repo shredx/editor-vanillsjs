@@ -146,18 +146,21 @@ function () {
 
     _defineProperty(this, "getPlugins", function () {
       var data = [];
+      Object.keys(_plugins_registry__WEBPACK_IMPORTED_MODULE_1__["default"]).forEach(function (pluginKey) {
+        var path = _plugins_registry__WEBPACK_IMPORTED_MODULE_1__["default"][pluginKey];
+        console.log(pluginKey, path);
 
-      for (var plugin in _plugins_registry__WEBPACK_IMPORTED_MODULE_1__["default"]) {
         try {
-          var pl = __webpack_require__("./src/plugins sync recursive ^\\.\\/.*$")("./".concat(plugin))["default"];
+          var pl = __webpack_require__("./src/plugins sync recursive ^\\.\\/.*$")("./".concat(path))["default"];
 
           if (pl) {
             data.push(pl);
           }
-        } catch (e) {// handle error here
+        } catch (e) {
+          // handle error here
+          console.log(e);
         }
-      }
-
+      });
       return data;
     });
 
@@ -188,6 +191,18 @@ function () {
     });
 
     _defineProperty(this, "onSelect", function () {// implement it
+    });
+
+    _defineProperty(this, "onDrop", function (e) {
+      _this.dispatchEvent("onDrop", {
+        event: e
+      });
+    });
+
+    _defineProperty(this, "onDragOver", function (e) {
+      _this.dispatchEvent("onDragOver", {
+        event: e
+      });
     });
 
     _defineProperty(this, "saveSelection", function () {
@@ -223,7 +238,7 @@ function () {
     _defineProperty(this, "runPlugins", function (method, args) {
       _this._plugins.forEach(function (plugin) {
         if (plugin[method]) {
-          plugin[method](_this);
+          plugin[method](_this, args);
         }
       });
     });
@@ -260,6 +275,12 @@ function () {
     }, {
       name: "keydown",
       handler: "onKeydown"
+    }, {
+      name: "drop",
+      handler: "onDrop"
+    }, {
+      name: "dragover",
+      handler: "onDragOver"
     }];
     this.mount(editorNode);
     _store_events__WEBPACK_IMPORTED_MODULE_2__["default"].subscribe("changed", function () {
@@ -411,8 +432,12 @@ var editor = new _editor_editor__WEBPACK_IMPORTED_MODULE_0__["default"](node, {
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
+	"./drop": "./src/plugins/drop.js",
+	"./drop.js": "./src/plugins/drop.js",
 	"./emoji-transform-editor-plugin": "./src/plugins/emoji-transform-editor-plugin.js",
 	"./emoji-transform-editor-plugin.js": "./src/plugins/emoji-transform-editor-plugin.js",
+	"./inline-image-upload-plugin": "./src/plugins/inline-image-upload-plugin.js",
+	"./inline-image-upload-plugin.js": "./src/plugins/inline-image-upload-plugin.js",
 	"./registry": "./src/plugins/registry.js",
 	"./registry.js": "./src/plugins/registry.js",
 	"./selection": "./src/plugins/selection.js",
@@ -442,14 +467,173 @@ webpackContext.id = "./src/plugins sync recursive ^\\.\\/.*$";
 
 /***/ }),
 
+/***/ "./src/plugins/drop.js":
+/*!*****************************!*\
+  !*** ./src/plugins/drop.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var dropEditorPlugin =
+/*#__PURE__*/
+function () {
+  function dropEditorPlugin() {
+    _classCallCheck(this, dropEditorPlugin);
+  }
+
+  _createClass(dropEditorPlugin, null, [{
+    key: "onDrop",
+    value: function onDrop(editor) {
+      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      //kill any default behavior
+      data.event.stopPropagation();
+      data.event.preventDefault(); // const files = data.event.dataTransfer.files;
+      // // name, size, type inside of files
+      // console.log(files);
+    }
+  }, {
+    key: "onDragOver",
+    value: function onDragOver() {//console.log("drag over");
+    }
+  }]);
+
+  return dropEditorPlugin;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (dropEditorPlugin);
+
+/***/ }),
+
 /***/ "./src/plugins/emoji-transform-editor-plugin.js":
 /*!******************************************************!*\
   !*** ./src/plugins/emoji-transform-editor-plugin.js ***!
   \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /Users/rahul.sid/repos/personal/editor-js/src/plugins/emoji-transform-editor-plugin.js: Unexpected token, expected \"{\" (16:24)\n\n\u001b[0m \u001b[90m 14 | \u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 15 | \u001b[39m\u001b[36mexport\u001b[39m \u001b[36mdefault\u001b[39m {\u001b[0m\n\u001b[0m\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 16 | \u001b[39m  activate\u001b[33m:\u001b[39m \u001b[36mfunction\u001b[39m () \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[0m \u001b[90m    | \u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\u001b[0m\n\u001b[0m \u001b[90m 17 | \u001b[39m    \u001b[0m\n\u001b[0m \u001b[90m 18 | \u001b[39m  }\u001b[0m\n\u001b[0m \u001b[90m 19 | \u001b[39m}\u001b[0m\n    at Parser.raise (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:6344:17)\n    at Parser.unexpected (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:7659:16)\n    at Parser.expect (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:7645:28)\n    at Parser.parseBlock (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10329:10)\n    at Parser.parseFunctionBody (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9408:24)\n    at Parser.parseFunctionBodyAndFinish (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9378:10)\n    at withTopicForbiddingContext (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10498:12)\n    at Parser.withTopicForbiddingContext (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9683:14)\n    at Parser.parseFunction (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10497:10)\n    at Parser.parseFunctionExpression (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8864:17)\n    at Parser.parseExprAtom (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8777:21)\n    at Parser.parseExprSubscripts (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8413:23)\n    at Parser.parseMaybeUnary (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8393:21)\n    at Parser.parseExprOps (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8280:23)\n    at Parser.parseMaybeConditional (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8253:23)\n    at Parser.parseMaybeAssign (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8200:21)\n    at Parser.parseObjectProperty (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9265:101)\n    at Parser.parseObjPropValue (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9290:101)\n    at Parser.parseObjectMember (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9214:10)\n    at Parser.parseObj (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9138:25)\n    at Parser.parseExprAtom (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8774:21)\n    at Parser.parseExprSubscripts (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8413:23)\n    at Parser.parseMaybeUnary (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8393:21)\n    at Parser.parseExprOps (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8280:23)\n    at Parser.parseMaybeConditional (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8253:23)\n    at Parser.parseMaybeAssign (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:8200:21)\n    at Parser.parseExportDefaultExpression (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10973:24)\n    at Parser.parseExport (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:10868:31)\n    at Parser.parseStatementContent (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9892:27)\n    at Parser.parseStatement (/Users/rahul.sid/repos/personal/editor-js/node_modules/@babel/parser/lib/index.js:9788:17)");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _editor_editor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../editor/editor */ "./src/editor/editor.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+var emojiTransformEditorPlugin =
+/*#__PURE__*/
+function (_editor) {
+  _inherits(emojiTransformEditorPlugin, _editor);
+
+  function emojiTransformEditorPlugin() {
+    _classCallCheck(this, emojiTransformEditorPlugin);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(emojiTransformEditorPlugin).apply(this, arguments));
+  }
+
+  _createClass(emojiTransformEditorPlugin, [{
+    key: "onContentChanged",
+    value: function onContentChanged(editor, event) {// do here
+    }
+  }], [{
+    key: "transformToEmojis",
+    value: function transformToEmojis(editor, args) {// transform here
+    }
+  }]);
+
+  return emojiTransformEditorPlugin;
+}(_editor_editor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (emojiTransformEditorPlugin);
+
+/***/ }),
+
+/***/ "./src/plugins/inline-image-upload-plugin.js":
+/*!***************************************************!*\
+  !*** ./src/plugins/inline-image-upload-plugin.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/dom */ "./src/utils/dom.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+console.log(_utils_dom__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+var inlineImageUploadPlugin =
+/*#__PURE__*/
+function () {
+  function inlineImageUploadPlugin() {
+    _classCallCheck(this, inlineImageUploadPlugin);
+  }
+
+  _createClass(inlineImageUploadPlugin, null, [{
+    key: "onDrop",
+    value: function onDrop(editor) {
+      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      //kill any default behavior
+      data.event.stopPropagation();
+      data.event.preventDefault();
+      var files = data.event.dataTransfer.files; // name, size, type inside of files
+
+      console.log(files);
+
+      if (files.length === 0) {
+        return;
+      }
+
+      console.log(files[0].content);
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        editor._editor.addCustomTag(_utils_dom__WEBPACK_IMPORTED_MODULE_0__["default"].buildAnchorTag({
+          url: e.target.result,
+          text: files[0].name
+        }));
+      };
+
+      reader.readAsDataURL(files[0]);
+    }
+  }, {
+    key: "onDragOver",
+    value: function onDragOver() {//buildAnchorTag();
+      //console.log("drag over");
+    }
+  }]);
+
+  return inlineImageUploadPlugin;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (inlineImageUploadPlugin);
 
 /***/ }),
 
@@ -464,7 +648,9 @@ throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   emojiTransformEditorPlugin: "emoji-transform-editor-plugin",
-  selection: "selection"
+  selection: "selection",
+  drop: "drop",
+  inlineImageUploadPlugin: "inline-image-upload-plugin"
 });
 
 /***/ }),
@@ -562,6 +748,30 @@ var events = function () {
 
 /***/ }),
 
+/***/ "./src/utils/dom.js":
+/*!**************************!*\
+  !*** ./src/utils/dom.js ***!
+  \**************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var buildAnchorTag = function buildAnchorTag(data) {
+  var url = data.url,
+      _data$text = data.text,
+      text = _data$text === void 0 ? "" : _data$text,
+      _data$target = data.target,
+      target = _data$target === void 0 ? "" : _data$target;
+  return "<img src='".concat(url, "' alt=\"").concat(text, "\"></img>");
+};
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  buildAnchorTag: buildAnchorTag
+});
+
+/***/ }),
+
 /***/ "./src/utils/editor/editor-api.js":
 /*!****************************************!*\
   !*** ./src/utils/editor/editor-api.js ***!
@@ -641,6 +851,11 @@ function () {
     key: "bold",
     value: function bold() {
       this._ec("bold", false);
+    }
+  }, {
+    key: "addCustomTag",
+    value: function addCustomTag(htmlString) {
+      this._ec("insertHTML", false, htmlString);
     } // copy: -> @_ec("copy", false)
     // createLink: (uri) -> @_ec("createLink", false, uri)
     // cut: -> @_ec("cut", false)
