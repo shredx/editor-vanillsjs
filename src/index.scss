@@ -1,5 +1,9 @@
 // all measurements in multiple of 4px
 .vanillajs-editor {
+  div {
+    margin: 4px 0px;
+  }
+  line-height: 1.58;
   &:focus {
     outline: 0px solid #ffcece;
   }

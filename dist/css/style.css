@@ -1,5 +1,8 @@
 .vanillajs-editor {
+  line-height: 1.58;
   padding: 12px; }
+  .vanillajs-editor div {
+    margin: 4px 0px; }
   .vanillajs-editor:focus {
     outline: 0px solid #ffcece; }
   .vanillajs-editor img {
