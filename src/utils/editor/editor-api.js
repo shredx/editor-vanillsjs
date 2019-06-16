@@ -76,7 +76,11 @@ class editorApi {
   // insertUnorderedList: -> @_ec("insertUnorderedList", false)
   // insertParagraph: -> @_ec("insertParagraph", false)
   // insertText: (text) -> @_ec("insertText", false, text)
-  // italic: -> @_ec("italic", false)
+
+  italic() {
+    this._ec("italic", false);
+  }
+  
   // justifyCenter: -> @_ec("justifyCenter", false)
   // justifyFull: -> @_ec("justifyFull", false)
   justifyLeft() {
