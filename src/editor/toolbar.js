@@ -15,6 +15,17 @@ class toolbar {
           this._editor.removeAllRanges();
           this._editor.focusEditor();
         }
+      },
+
+      italic: {
+        status: true,
+        image: "",
+        name: "I",
+        callback: () => {
+          this._editor.italic();
+          this._editor.removeAllRanges();
+          this._editor.focusEditor();
+        }
       }
     };
   }
