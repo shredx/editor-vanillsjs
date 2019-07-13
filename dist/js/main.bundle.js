@@ -77,7 +77,7 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "/";
 /******/
 /******/
 /******/ 	// Load entry module and return exports
@@ -352,11 +352,14 @@ function () {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/dom */ "./src/utils/dom.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
 
 var toolbar =
 /*#__PURE__*/
@@ -425,7 +428,31 @@ function () {
           className: "toolbar-icons",
           name: "AT",
           callback: function callback() {
-            _this._editor.justifyLeft();
+            _utils_dom__WEBPACK_IMPORTED_MODULE_0__["default"].openUploadFile({
+              playClick: true,
+              eventListners: [{
+                name: 'change',
+                cb: function cb(event) {
+                  Object.keys(event.target.files).forEach(function (key) {
+                    var file = event.target.files[key];
+                    var reader = new FileReader();
+                    var that = _this;
+
+                    reader.onload = function (e) {
+                      //insert images here
+                      console.log(that);
+
+                      that._editor.addCustomTag(_utils_dom__WEBPACK_IMPORTED_MODULE_0__["default"].buildAnchorTag({
+                        url: e.target.result,
+                        text: file.name
+                      }));
+                    };
+
+                    reader.readAsDataURL(file);
+                  });
+                }
+              }]
+            });
 
             _this._editor.focusEditor();
           }
@@ -532,12 +559,13 @@ function webpackContext(req) {
 	return __webpack_require__(id);
 }
 function webpackContextResolve(req) {
-	if(!__webpack_require__.o(map, req)) {
+	var id = map[req];
+	if(!(id + 1)) { // check for number or string
 		var e = new Error("Cannot find module '" + req + "'");
 		e.code = 'MODULE_NOT_FOUND';
 		throw e;
 	}
-	return map[req];
+	return id;
 }
 webpackContext.keys = function webpackContextKeys() {
 	return Object.keys(map);
@@ -845,10 +873,24 @@ var buildAnchorTag = function buildAnchorTag(data) {
       _data$target = data.target,
       target = _data$target === void 0 ? "" : _data$target;
   return "<img src='".concat(url, "' alt=\"").concat(text, "\"></img>");
+}; //@todo write config here
+
+
+var openUploadFile = function openUploadFile(config) {
+  var fileInput = document.createElement('input');
+  fileInput.setAttribute('type', 'file');
+  config.eventListners.forEach(function (event) {
+    fileInput.addEventListener(event.name, event.cb, false);
+  }); // it clicks on file
+
+  if (config.playClick) {
+    fileInput.click();
+  }
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  buildAnchorTag: buildAnchorTag
+  buildAnchorTag: buildAnchorTag,
+  openUploadFile: openUploadFile
 });
 
 /***/ }),

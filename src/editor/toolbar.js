@@ -1,3 +1,5 @@
+import utils from "../utils/dom";
+
 class toolbar {
   constructor(node, editorRef) {
     this._editorNode = node;
@@ -52,7 +54,30 @@ class toolbar {
         className: "toolbar-icons",
         name: "AT",
         callback: () => {
-          this._editor.justifyLeft();
+          utils.openUploadFile({
+            playClick: true,
+            eventListners: [{
+              name: 'change',
+              cb: (event) => {
+                Object.keys(event.target.files).forEach((key) => {
+                  const file = event.target.files[key];
+                  var reader = new FileReader();
+                  const that = this;
+                  reader.onload = (e) => {
+                    //insert images here
+                    console.log(that);
+                    that._editor.addCustomTag(
+                      utils.buildAnchorTag({
+                        url: e.target.result,
+                        text: file.name
+                      })
+                    );
+                  };
+                  reader.readAsDataURL(file);
+                })
+              }
+            }]
+          });
           this._editor.focusEditor();
         }
       },
