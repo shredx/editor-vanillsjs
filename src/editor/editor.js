@@ -8,7 +8,7 @@ import registry from "../plugins/registry";
 class Editor {
   constructor(editorNode, config) {
     this._editor = new editorApi(editorNode);
-    this._plugins = this.getPlugins();
+    this._plugins = this.getPlugins();//An array of exported modules
     // Config for toolbar
     this._toolbar = new toolbar(editorNode, this._editor);
     this.toolbarOptions = this._toolbar.get();
@@ -42,6 +42,7 @@ class Editor {
     this.methods.onChange = config.onChange;
   }
 
+  //Callled when any change applied to editorNode
   _mutationOberserverCb = (mutationList, observer) => {
     console.log("callback", mutationList);
     mutationList.forEach(mutation => {
@@ -64,22 +65,24 @@ class Editor {
   mount(editorNode) {
     const parentNode = document.createElement("div");
     parentNode.classList.add("parent");
+
     const contentEditableNode = document.createElement("div");
     contentEditableNode.classList.add("vanillajs-editor");
+    contentEditableNode.contentEditable = true;
 
     const toolbar = document.createElement("div");
     toolbar.classList.add("editor-toolbar");
-    contentEditableNode.contentEditable = true;
 
     contentEditableNode.addEventListener("input", this.onInputChange, false);
 
+    //ContentEditableNode starts to listen on every event defined in eventsAndCbs
     this._attachEvents(contentEditableNode);
 
     const options = [];
     for (let func in this.toolbarOptions) {
       if (this.toolbarOptions[func].status) {
         const opt = this.toolbarOptions[func];
-        let item = opt.name;
+        let item = opt.name;//item = "B", "I", "RA", etc.
 
         if (opt.image) {
           item = `<img src="${opt.image}" data-name="${func}" class="${
@@ -134,7 +137,7 @@ class Editor {
         console.log(e);
       }
     });
-
+    console.log(data, "data......");
     return data;
   };
 

@@ -18,6 +18,19 @@ class toolbar {
           this._editor.focusEditor();
         }
       },
+
+      italic: {
+        status: true,
+        image: "assets/icons/italic.svg",
+        name: "I",
+        className: "toolbar-icons",
+        callback: () => {
+          this._editor.italic();
+          this._editor.removeAllRanges();
+          this._editor.focusEditor();
+        }
+      },
+
       centerAlign: {
         status: true,
         image: "assets/icons/center-align.png",
@@ -78,17 +91,6 @@ class toolbar {
               }
             }]
           });
-          this._editor.focusEditor();
-        }
-      },
-
-      italic: {
-        status: true,
-        image: "",
-        name: "I",
-        callback: () => {
-          this._editor.italic();
-          this._editor.removeAllRanges();
           this._editor.focusEditor();
         }
       },
