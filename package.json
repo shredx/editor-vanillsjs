@@ -57,7 +57,7 @@
     "iconfont-webpack-plugin": "^3.1.0",
     "json-loader": "^0.5.7",
     "loader": "^2.1.1",
-    "node-sass": "^4.7.2",
+    "node-sass": "^4.13.1",
     "postcss": "^5.2.6",
     "prettier": "^1.10.2",
     "pug-html-loader": "^1.1.5",
